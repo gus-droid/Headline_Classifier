@@ -7,10 +7,13 @@ from gensim.models import Word2Vec
 import gensim
 import nltk
 from nltk import pos_tag
+from nltk.corpus import subjectivity
+from nltk.sentiment import SentimentIntensityAnalyzer
+nltk.download('vader_lexicon')
 from sklearn.feature_extraction import DictVectorizer
 nltk.download('averaged_perceptron_tagger_eng')
 
-df = pd.read_csv("data/NewsCategorizer.csv")
+df = pd.read_csv("Headline_Classifier/NewsCategorizer.csv")
 
 # filtering/cleaning data 
 df = df[["headline", "category"]]
@@ -26,7 +29,6 @@ for h in range(len(df["tokenized_headline"])):
 df["tokenized_headline"] = df["tokenized_headline"].apply(lambda x: [i.lower() for i in x])   
 
 df_filt = df[df["category"].isin(["POLITICS", "WORLD NEWS", "ENTERTAINMENT", "BUSINESS", "TRAVEL"])]
-
 
 # n-grams feature
 # Bigram counts for entire dataset
@@ -44,7 +46,6 @@ texts = [" ".join(word) for word in df_filt["tokenized_headline"]]
 vectorizer = CountVectorizer(ngram_range=(2,2))
 ngrams_data = vectorizer.fit_transform(texts)
 
-
 # Word2Vec
 word2vecmodel = gensim.models.Word2Vec(df_filt["tokenized_headline"], min_count=1, vector_size=100, window=2)
 headline_vectors = []
@@ -57,7 +58,6 @@ for word_lst in df_filt["tokenized_headline"]:
 
 word2vec_data = np.vstack(headline_vectors)
 
-
 # POS-tagging
 pos_data = []
 for word_lst in df_filt["tokenized_headline"]:
@@ -68,11 +68,44 @@ for word_lst in df_filt["tokenized_headline"]:
             counts[tag] += 1
         else:
             counts[tag] = 1
+        if tag == 'VBP' or tag == 'VBZ':
+            continue #present tense verb
+        elif tag == 'VBD':
+            continue #past tense verb
+        elif tag == 'VBG':
+            continue #gerund verb
+        else:
+            continue
     pos_data.append(counts)
+
 
 # Sparse matrix POS (row, num of unique tags)
 vec = DictVectorizer()
 pos_data = vec.fit_transform(pos_data)
 
+# Compressing names, numbers
+names_url = 'https://data.cityofnewyork.us/api/views/25th-nujf/rows.csv?accessType=DOWNLOAD'
+names_df = pd.read_csv(names_url)
+names_df = names_df.dropna(subset=["Child's First Name"])
+names_list = set(names_df["Child's First Name"].tolist())
+
+for headline in df_filt["tokenized_headline"]:
+    for token in headline:
+        if token is int or float:
+            continue # compress numbers
+        if token in names_list:
+            continue # compress names 
+        if token == "?":
+            continue # note question mark
+
+# assign a sentiment number for each headline (we can likely use the compound number)
+
+sentiments = []
+
+for headline in df_filt["tokenized_headline"]:
+    sentiment_analyzer = SentimentIntensityAnalyzer()
+    sentiment = sentiment_analyzer.polarity_scores(" ".join(headline))
+    sentiments.append(sentiment)
+#print(sentiments[0:5])
 
 # Final data/features: ngrams_data, word2vec_data, pos_data
