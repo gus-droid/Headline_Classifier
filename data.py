@@ -97,7 +97,7 @@ X = np.hstack([ngrams_dense, word2vec_data, pos_dense, sentiment_dense])
 # Target labels
 y = df_filt['category'].values
 
-# form: category of headline1 : features []
-print(X.shape)
-print(y.shape)
-print(y)
+
+# print(X.shape)
+# print(y.shape)
+# print(y)
