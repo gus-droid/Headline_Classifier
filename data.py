@@ -12,8 +12,9 @@ from nltk.sentiment import SentimentIntensityAnalyzer
 nltk.download('vader_lexicon')
 from sklearn.feature_extraction import DictVectorizer
 nltk.download('averaged_perceptron_tagger_eng')
+from scipy.sparse import hstack
 
-df = pd.read_csv("Headline_Classifier/NewsCategorizer.csv")
+df = pd.read_csv("data/NewsCategorizer.csv")
 
 # filtering/cleaning data 
 df = df[["headline", "category"]]
@@ -43,7 +44,7 @@ for words in df_filt["tokenized_headline"]:
 
 # Create bigram_counts per headline (Sparse matrix - (row, col), num of bigrams count)
 texts = [" ".join(word) for word in df_filt["tokenized_headline"]]
-vectorizer = CountVectorizer(ngram_range=(2,2))
+vectorizer = CountVectorizer(ngram_range=(2,2), max_features=5000)
 ngrams_data = vectorizer.fit_transform(texts)
 
 # Word2Vec
@@ -108,4 +109,18 @@ for headline in df_filt["tokenized_headline"]:
     sentiments.append(sentiment)
 #print(sentiments[0:5])
 
-# Final data/features: ngrams_data, word2vec_data, pos_data
+# Final data/features: ngrams_data, word2vec_data, pos_data, sentiments
+ngrams_dense = ngrams_data.toarray()
+pos_dense = pos_data.toarray()
+sentiment_dense = np.array([s['compound'] for s in sentiments]).reshape(-1, 1)
+
+# Stack all features horizontally
+X = np.hstack([ngrams_dense, word2vec_data, pos_dense, sentiment_dense])
+
+# Target labels
+y = df_filt['category'].values
+
+# form: category of headline1 : features []
+print(X.shape)
+print(y.shape)
+print(y)

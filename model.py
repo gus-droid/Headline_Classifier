@@ -9,6 +9,9 @@ import pandas as pd
 import nltk
 from nltk.corpus import wordnet as wn
 
+from data import X, y
 
-
-
+print(X)
+print(X.shape)
+print(y)
+print(y.shape)
