@@ -14,7 +14,7 @@ from sklearn.feature_extraction import DictVectorizer
 nltk.download('averaged_perceptron_tagger_eng')
 from scipy.sparse import hstack
 
-df = pd.read_csv("/Users/matthewjordan/Desktop/LING2270/NewsCategorizer 2.csv")
+df = pd.read_csv("data/NewsCategorizer.csv")
 
 # filtering/cleaning data 
 df = df[["headline", "category"]]
@@ -61,6 +61,11 @@ bigrams_data = vectorizer.fit_transform(texts)
 vectorizer_tri = CountVectorizer(ngram_range=(3,3), max_features=5000)
 trigrams_data = vectorizer_tri.fit_transform(texts)
 
+# unigram counts
+# Unigrams (single words)
+vectorizer_uni = CountVectorizer(ngram_range=(1,1), max_features=5000)
+unigrams_data = vectorizer_uni.fit_transform(texts)
+
 
 # Word2Vec
 word2vecmodel = gensim.models.Word2Vec(df_filt["tokenized_headline"], min_count=1, vector_size=100, window=2)
@@ -101,20 +106,17 @@ for headline in df_filt["tokenized_headline"]:
 
 
 # Final data/features: ngrams_data, word2vec_data, pos_data, sentiments
+unigrams_dense = unigrams_data.toarray()
 bigrams_dense = bigrams_data.toarray()
 trigrams_dense = trigrams_data.toarray()
 pos_dense = pos_data.toarray()
 sentiment_dense = np.array([s['compound'] for s in sentiments]).reshape(-1, 1)
 
 # Stack all features horizontally
-X = np.hstack([bigrams_dense, trigrams_dense, word2vec_data, pos_dense, sentiment_dense])
+X = np.hstack([unigrams_dense, bigrams_dense, trigrams_dense, word2vec_data, pos_dense, sentiment_dense])
 
 # Target labels
 y = df_filt['category'].values
 
 # print(X)
 # print(X.shape)
-
-# print(X.shape)
-# print(y.shape)
-# print(y)

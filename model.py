@@ -26,7 +26,7 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
 
 
 # Logistic Regression:
-model2 = LogisticRegression(max_iter=2000)
+model2 = LogisticRegression(max_iter=2000, multi_class="multinomial")
 model2.fit(X_train, y_train)
 preds = model2.predict(X_test)
 print(accuracy_score(y_test, preds))
