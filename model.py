@@ -19,10 +19,10 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
 
 
 # Naive Bayes Training (# Initial Output: 0.558)
-model1 = GaussianNB()
-model1.fit(X_train, y_train)
-y_pred = model1.predict(X_test)
-accuracy = accuracy_score(y_test, y_pred)
+#model1 = GaussianNB()
+#model1.fit(X_train, y_train)
+#y_pred = model1.predict(X_test)
+#accuracy = accuracy_score(y_test, y_pred)
 
 
 # Logistic Regression:
