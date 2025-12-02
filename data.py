@@ -65,7 +65,7 @@ for word_lst in df_filt["tokenized_headline"]:
     pos_tags = pos_tag(word_lst)
     counts = {}
     for word, tag in pos_tags:
-        if tag in counts == 1:
+        if tag in counts:
             counts[tag] += 1
         else:
             counts[tag] = 1
@@ -77,7 +77,6 @@ vec = DictVectorizer()
 pos_data = vec.fit_transform(pos_data)
 
 # assign a sentiment number for each headline (we can likely use the compound number)
-
 sentiments = []
 
 for headline in df_filt["tokenized_headline"]:
@@ -97,6 +96,8 @@ X = np.hstack([ngrams_dense, word2vec_data, pos_dense, sentiment_dense])
 # Target labels
 y = df_filt['category'].values
 
+# print(X)
+# print(X.shape)
 
 # print(X.shape)
 # print(y.shape)
