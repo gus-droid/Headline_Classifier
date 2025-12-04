@@ -10,7 +10,7 @@ from nltk.corpus import wordnet as wn
 from data import X, y
 from sklearn.model_selection import train_test_split
 from sklearn.naive_bayes import GaussianNB
-from sklearn.metrics import accuracy_score
+from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
 from sklearn.metrics import confusion_matrix
 from sklearn.linear_model import LogisticRegression
 
@@ -30,6 +30,9 @@ model2 = LogisticRegression(max_iter=2000, multi_class="multinomial")
 model2.fit(X_train, y_train)
 preds = model2.predict(X_test)
 print(accuracy_score(y_test, preds))
+print(precision_score(y_test, preds, average='macro'))
+print(recall_score(y_test, preds, average='macro'))
+print(f1_score(y_test, preds, average=None))
 
 # ConfusionMatrix
 confusionmatrix = confusion_matrix(y_test, preds, labels = ["POLITICS", "WORLD NEWS", "ENTERTAINMENT", "BUSINESS", "TRAVEL"])
@@ -37,9 +40,9 @@ confusionmatrix = confusion_matrix(y_test, preds, labels = ["POLITICS", "WORLD N
 print(confusionmatrix)
 
 # Best Model:
-# 0.6618
-# [[563 144  86 110  66]
-#  [ 92 660  84  99  86]
-#  [ 59  68 731  60  80]
-#  [ 72  88  51 651 149]
-#  [ 35  70  80 112 704]]
+# 0.824
+# [[748  83  51  84  26]
+# [ 77 802  26  48  47]
+# [ 38  28 858  29  51]
+# [ 44  31  25 857  42]
+# [ 29  49  33  39 855]]

@@ -14,7 +14,7 @@ from sklearn.feature_extraction import DictVectorizer
 nltk.download('averaged_perceptron_tagger_eng')
 from scipy.sparse import hstack
 
-df = pd.read_csv("data/NewsCategorizer.csv")
+df = pd.read_csv("/Users/matthewjordan/Desktop/LING2270/NewsCategorizer 2.csv")
 
 # filtering/cleaning data 
 df = df[["headline", "category"]]
@@ -43,14 +43,14 @@ for words in df_filt["tokenized_headline"]:
             bigram_counts[bigram] = 1
 
 #tri-grams feature
-trigram_counts = {}
-for words in df_filt["tokenized_headline"]:
-    for i in range(len(words) - 2):
-        trigram = (words[i], words[i+1], words[i+2])
-        if trigram in trigram_counts:
-            trigram_counts[trigram] += 1
-        else:
-            trigram_counts[trigram] = 1
+#trigram_counts = {}
+#for words in df_filt["tokenized_headline"]:
+    #for i in range(len(words) - 2):
+        #trigram = (words[i], words[i+1], words[i+2])
+        #if trigram in trigram_counts:
+            #trigram_counts[trigram] += 1
+       # else:
+            #trigram_counts[trigram] = 1
 
 # Create bigram_counts per headline (Sparse matrix - (row, col), num of bigrams count)
 texts = [" ".join(word) for word in df_filt["tokenized_headline"]]
@@ -58,8 +58,8 @@ vectorizer = CountVectorizer(ngram_range=(2,2), max_features=5000)
 bigrams_data = vectorizer.fit_transform(texts)
 
 #trigram counts
-vectorizer_tri = CountVectorizer(ngram_range=(3,3), max_features=5000)
-trigrams_data = vectorizer_tri.fit_transform(texts)
+#vectorizer_tri = CountVectorizer(ngram_range=(3,3), max_features=5000)
+#trigrams_data = vectorizer_tri.fit_transform(texts)
 
 # unigram counts
 # Unigrams (single words)
@@ -104,16 +104,15 @@ for headline in df_filt["tokenized_headline"]:
     sentiment = sentiment_analyzer.polarity_scores(" ".join(headline))
     sentiments.append(sentiment)
 
-
 # Final data/features: ngrams_data, word2vec_data, pos_data, sentiments
 unigrams_dense = unigrams_data.toarray()
 bigrams_dense = bigrams_data.toarray()
-trigrams_dense = trigrams_data.toarray()
+#trigrams_dense = trigrams_data.toarray()
 pos_dense = pos_data.toarray()
 sentiment_dense = np.array([s['compound'] for s in sentiments]).reshape(-1, 1)
 
 # Stack all features horizontally
-X = np.hstack([unigrams_dense, bigrams_dense, trigrams_dense, word2vec_data, pos_dense, sentiment_dense])
+X = np.hstack([unigrams_dense, bigrams_dense, word2vec_data, pos_dense, sentiment_dense])
 
 # Target labels
 y = df_filt['category'].values
