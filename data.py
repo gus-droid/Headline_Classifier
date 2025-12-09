@@ -117,5 +117,7 @@ X = np.hstack([unigrams_dense, bigrams_dense, word2vec_data, pos_dense, sentimen
 # Target labels
 y = df_filt['category'].values
 
+headlines = df_filt['headline'].values
+
 # print(X)
 # print(X.shape)
