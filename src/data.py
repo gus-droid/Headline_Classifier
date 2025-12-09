@@ -1,6 +1,6 @@
 import pandas as pd
 import numpy as np
-from src.twokenize import tokenize
+from twokenize import tokenize
 from sklearn.feature_extraction.text import CountVectorizer
 import string
 from gensim.models import Word2Vec
@@ -112,7 +112,7 @@ pos_dense = pos_data.toarray()
 sentiment_dense = np.array([s['compound'] for s in sentiments]).reshape(-1, 1)
 
 # Stack all features horizontally
-X = np.hstack([unigrams_dense, bigrams_dense, word2vec_data, pos_dense, sentiment_dense])
+X = np.hstack([unigrams_dense, bigrams_dense, word2vec_data, pos_dense, sentiment_dense, headline_length_feature])
 
 # Target labels
 y = df_filt['category'].values

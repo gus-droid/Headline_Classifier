@@ -2,12 +2,14 @@ import json
 import numpy as np
 import os
 import pandas as pd
-from data import X, y
+from data import X, y, headlines
 from model import training
 
-# make results folder and train
+# Create results folder
 os.makedirs("../results", exist_ok=True)
-metrics, confusion = training(X, y)
+
+# Train model and get results
+metrics, confusion = training(X, y, headlines)
 
 # Save metrics
 metrics_path = "../results/metrics.json"
@@ -18,6 +20,6 @@ with open(metrics_path, "w") as f:
 confusion_path = "../results/confusion_matrix.csv"
 pd.DataFrame(confusion).to_csv(confusion_path, index=False)
 
-print("\n Saved results to: ")
+print("\nSaved results to:")
 print(f" - {metrics_path}")
 print(f" - {confusion_path}")
