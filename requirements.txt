@@ -1,0 +1,8 @@
+pandas
+numpy
+twokenize
+scikit-learn
+gensim
+nltk
+scipy
+os
