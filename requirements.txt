@@ -6,3 +6,4 @@ gensim
 nltk
 scipy
 os
+spacy
