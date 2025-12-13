@@ -14,7 +14,9 @@ from sklearn.linear_model import LogisticRegression
 
 def training(X, y, headlines):
     # split data
-    headlines_train, headlines_test, X_train, X_test, y_train, y_test = train_test_split(headlines, X, y, test_size=0.2, random_state=42)
+    headlines_train, headlines_test, X_train, X_test, y_train, y_test = train_test_split(headlines, X, y, test_size=0.2, 
+                                                                                         random_state= 5
+                                                                                         )
 
 
     # Naive Bayes Training (# Initial Output: 0.558)

@@ -64,14 +64,14 @@ for words in df_filt["tokenized_headline"]:
             bigram_counts[bigram] = 1
 
 #tri-grams feature
-#trigram_counts = {}
-#for words in df_filt["tokenized_headline"]:
-    #for i in range(len(words) - 2):
-        #trigram = (words[i], words[i+1], words[i+2])
-        #if trigram in trigram_counts:
-            #trigram_counts[trigram] += 1
-        #else:
-            #trigram_counts[trigram] = 1
+trigram_counts = {}
+for words in df_filt["tokenized_headline"]:
+    for i in range(len(words) - 2):
+        trigram = (words[i], words[i+1], words[i+2])
+        if trigram in trigram_counts:
+            trigram_counts[trigram] += 1
+        else:
+            trigram_counts[trigram] = 1
 
 # NER feature extraction
 entity_labels = ["PERSON", "ORG", "GPE", "MONEY", "LOC", "FAC", "NORP"]
@@ -89,8 +89,8 @@ vectorizer = CountVectorizer(ngram_range=(2,2), max_features=5000)
 bigrams_data = vectorizer.fit_transform(texts)
 
 #trigram counts
-#vectorizer_tri = CountVectorizer(ngram_range=(3,3), max_features=5000)
-#trigrams_data = vectorizer_tri.fit_transform(texts)
+vectorizer_tri = CountVectorizer(ngram_range=(3,3), max_features=5000)
+trigrams_data = vectorizer_tri.fit_transform(texts)
 
 
 # unigram counts
@@ -145,12 +145,11 @@ bigrams_dense = bigrams_data.toarray()
 pos_dense = pos_data.toarray()
 sentiment_dense = np.array([s['compound'] for s in sentiments]).reshape(-1, 1)
 ner_dense = ner_matrix.toarray()
-#trigrams_dense = trigrams_data.toarray()
+trigrams_dense = trigrams_data.toarray()
 
 # Stack all features horizontally
 X = np.hstack([unigrams_dense, bigrams_dense, word2vec_data, pos_dense, sentiment_dense, ner_dense,
-               #trigrams_dense
-              ])
+                trigrams_dense])
 
 # Target labels
 y = df_filt['category'].values
